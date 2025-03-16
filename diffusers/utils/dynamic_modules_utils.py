@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib import request
 
-from huggingface_hub import HfFolder, cached_download, hf_hub_download, model_info
+from huggingface_hub import HfFolder, hf_hub_download, model_info
 from packaging import version
 
 from .. import __version__
@@ -282,14 +282,15 @@ def get_cached_module_file(
         # community pipeline on GitHub
         github_url = COMMUNITY_PIPELINES_URL.format(revision=revision, pipeline=pretrained_model_name_or_path)
         try:
-            resolved_module_file = cached_download(
-                github_url,
+            resolved_module_file = hf_hub_download(
+                repo_id=github_url,  # Ensure this is the correct repo ID format
+                filename="filename.ext",  # Specify the filename explicitly
                 cache_dir=cache_dir,
                 force_download=force_download,
                 proxies=proxies,
                 resume_download=resume_download,
                 local_files_only=local_files_only,
-                use_auth_token=False,
+                token=None,  # Equivalent to `use_auth_token=False`
             )
             submodule = "git"
             module_file = pretrained_model_name_or_path + ".py"
